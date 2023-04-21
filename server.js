@@ -46,7 +46,7 @@ const protectedRoutes = [
   { route: "/areas", methods: ["POST", "PUT", "DELETE", "PATCH"] },
   { route: "/recipeTags", methods: ["POST", "PUT", "DELETE", "PATCH"] },
   { route: "/orders", methods: ["GET", "POST", "PUT", "DELETE", "PATCH"] },
-  { route: "/dogs", methods: ["GET", "PUT", "DELETE", "PATCH"] }
+  { route: "/dogs", methods: ["PUT"] }
 ];
 
 // Authorization logic
@@ -58,7 +58,7 @@ server.use((req, res, next) => {
 
     if (route === req.url) {
       if (methods.includes(req.method)) {
-        NeedsAuthorization = true;
+        NeedsAuthorization = false;
         break;
       }
     }
@@ -105,75 +105,75 @@ server.use((req, res, next) => {
   next();
 });
 
-// registration logic
-server.post("/user/register", (req, res) => {
-  if (
-    !req.body ||
-    !req.body.username ||
-    !req.body.password ||
-    !req.body.email
-  ) {
-    return res
-      .status(400)
-      .send("Bad request, requires username, password & email.");
-  }
+// // registration logic
+// server.post("/user/register", (req, res) => {
+//   if (
+//     !req.body ||
+//     !req.body.username ||
+//     !req.body.password ||
+//     !req.body.email
+//   ) {
+//     return res
+//       .status(400)
+//       .send("Bad request, requires username, password & email.");
+//   }
 
-  db.read();
-  const users = db.data.users;
-  let largestId = 0;
-  users.forEach((user) => {
-    if (user.id > largestId) largestId = user.id;
-  });
+//   db.read();
+//   const users = db.data.users;
+//   let largestId = 0;
+//   users.forEach((user) => {
+//     if (user.id > largestId) largestId = user.id;
+//   });
 
-  const hashedPassword = bcrypt.hashSync(req.body.password, 10);
-  const newId = largestId + 1;
-  const newUserData = {
-    username: req.body.username,
-    password: hashedPassword,
-    email: req.body.email,
-    firstname: req.body.firstname || "",
-    lastname: req.body.lastname || "",
-    avatar: req.body.avatar || "",
-    createdAt: Date.now(),
-    id: newId,
-  };
+//   const hashedPassword = bcrypt.hashSync(req.body.password, 10);
+//   const newId = largestId + 1;
+//   const newUserData = {
+//     username: req.body.username,
+//     password: hashedPassword,
+//     email: req.body.email,
+//     firstname: req.body.firstname || "",
+//     lastname: req.body.lastname || "",
+//     avatar: req.body.avatar || "",
+//     createdAt: Date.now(),
+//     id: newId,
+//   };
 
-  db.data.users.push(newUserData);
+//   db.data.users.push(newUserData);
 
-  db.write();
+//   db.write();
 
-  res.status(201).send(newUserData);
-});
+//   res.status(201).send(newUserData);
+// });
 
-// login/sign in logic
-server.post("/user/login", (req, res) => {
-  if (!req.body || !req.body.username || !req.body.password) {
-    return res
-      .status(400)
-      .send("Bad request, requires username & password both.");
-  }
+// // login/sign in logic
+// server.post("/user/login", (req, res) => {
+//   if (!req.body || !req.body.username || !req.body.password) {
+//     return res
+//       .status(400)
+//       .send("Bad request, requires username & password both.");
+//   }
 
-  db.read();
-  const users = db.data.users;
-  const user = users.find((u) => u.username === req.body.username);
-  if (user == null) {
-    return res.status(400).send(`Cannot find user: ${req.body.username}`);
-  }
+//   db.read();
+//   const users = db.data.users;
+//   const user = users.find((u) => u.username === req.body.username);
+//   if (user == null) {
+//     return res.status(400).send(`Cannot find user: ${req.body.username}`);
+//   }
 
-  if (bcrypt.compareSync(req.body.password, user.password)) {
-    // creating JWT token
-    const accessToken = generateAccessToken(user);
-    return res.send({
-      accessToken: accessToken,
-    });
-  } else {
-    res.send("Not allowed, name/password mismatch.");
-  }
-});
+//   if (bcrypt.compareSync(req.body.password, user.password)) {
+//     // creating JWT token
+//     const accessToken = generateAccessToken(user);
+//     return res.send({
+//       accessToken: accessToken,
+//     });
+//   } else {
+//     res.send("Not allowed, name/password mismatch.");
+//   }
+// });
 
-function generateAccessToken(user) {
-  return jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, { expiresIn: "6h" });
-}
+// function generateAccessToken(user) {
+//   return jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, { expiresIn: "6h" });
+// }
 
 // To modify responses, overwrite router.render method:
 // In this example, returned resources will be wrapped in a body property
