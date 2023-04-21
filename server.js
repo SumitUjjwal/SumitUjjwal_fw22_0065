@@ -46,6 +46,7 @@ const protectedRoutes = [
   { route: "/areas", methods: ["POST", "PUT", "DELETE", "PATCH"] },
   { route: "/recipeTags", methods: ["POST", "PUT", "DELETE", "PATCH"] },
   { route: "/orders", methods: ["GET", "POST", "PUT", "DELETE", "PATCH"] },
+  { route: "/dogs", methods: ["GET", "PUT", "DELETE", "PATCH"] }
 ];
 
 // Authorization logic
