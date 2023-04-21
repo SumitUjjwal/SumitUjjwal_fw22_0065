@@ -18,6 +18,8 @@ let HOST_FOR_IMAGE = ABSOLUTE_IMG_URL ? HOST == 'localhost' ? `${PROTOCOL}${HOST
 
 
 var database = {
+  dogs: [],
+  books: [],
   cats: [],
   users: [],
   posts: [],
@@ -31,6 +33,21 @@ var database = {
   recipeTags: [],
   orders: []
 };
+
+// 50 books for simple apps
+for (var i = 1; i <= 336; i++) {
+  database.books.push({
+    id: i,
+    name: faker.name.firstName(),
+    cost: roundToTwo(Math.random() * 100),
+    likes: Math.round(Math.random() * 1000),
+    image: encodeURI(`${HOST_FOR_IMAGE}/images/cat/cat-unsplash-${i}.jpg`),
+    thumb: encodeURI(`${HOST_FOR_IMAGE}/images/cat/cat-unsplash-${i}-thumb.jpg`),
+    description: faker.lorem.paragraph(),
+    breed: faker.animal.cat(),
+    createdAt: Date.now(),
+  });
+}
 
 // 336 cats for simple apps
 for (var i = 1; i <= 336; i++) {
